@@ -8,22 +8,15 @@ TRACK_SET_WAVE: EQU 3
 TRACK_DELAY:    EQU 4
 
 _main:
-    di
     call track_init
+    ei
     ;; Here happens your code
     jr $
+    
+    ;; Before exit/when you'll need stop audio
+    call track_free
     ret
 
-
-track_init:
-    di
-    ld hl, track_tick
-    ld e, $32
-    ld hl, vsync_int
-    MOSCALL mos_setint
-    ld (old_int_handler + 1), hl
-    ei
-    ret
 
 track_free:
     di
@@ -36,7 +29,13 @@ track_free:
     ei
     ret
 
-
+track_init:
+    di
+    ld hl, track_tick
+    ld e, $32
+    ld hl, vsync_int
+    MOSCALL mos_setint
+    ld (old_int_handler + 1), hl
 ;; Initializes track and sets vblank interrupt
 track_reinit:
     xor a
