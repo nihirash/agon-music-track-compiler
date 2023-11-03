@@ -16,7 +16,7 @@ It builts track file from plain text file with simple and human readable format.
 
 For Agon-compatible computers there're simple music player that can be builtin into your assembly code and used as simple two calls(one starts playing music, another stops).
 
-## Building player
+## Building compiler
 
 I'm building it using GNU Makefile and clang compiler. But code so simple - so any modern C compiler should work with it.
 
