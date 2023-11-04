@@ -6,7 +6,7 @@
 void process_song();
 
 /// @brief Pushes command's byte to buffer for storing 
-/// @param byte 
+/// @param byte byte for storing to buffer
 void push_byte(uint8_t byte);
 
 #endif
