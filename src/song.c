@@ -92,10 +92,13 @@ void try_parse_line() {
     }
 }
 
+/// @brief Pushes command's byte to buffer for storing 
+/// @param byte byte for storing to buffer
 void push_byte(uint8_t byte) {
     buffer[buffer_position++] = byte;
 }
 
+/// @brief Pprocessing of song
 void process_song() {
     initial_channel_state(&chan_a, 0);
     initial_channel_state(&chan_b, 1);
@@ -104,8 +107,11 @@ void process_song() {
     tempo = 1;
     was_diff = 0;
 
+    printf("Starting processing song\r\nParsing lines");
+
     while(!feof(f_input)) {
         get_line();
+        printf(".");
 
         // Empty line
         if (strlen(line) == 0) {
@@ -131,4 +137,5 @@ void process_song() {
     // Restart song from start
     fputc(0, f_output);
     fputc(OP_RESET, f_output);
+    printf("\r\nDone!\r\n");
 }

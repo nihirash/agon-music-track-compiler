@@ -2,7 +2,7 @@
 #define SONG_H 1
 #include <stdint.h>
 
-/// @brief Forces processing of song
+/// @brief Pprocessing of song
 void process_song();
 
 /// @brief Pushes command's byte to buffer for storing 

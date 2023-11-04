@@ -49,6 +49,8 @@ C#3 <- note
  F <- Volume(from 0 to F, hex number) 
 ```
 
+As note can be used also `R--`(release - stop playing current note). And as placeholder for ANY paramenter(note with octave IS single parameter) can be used symbol `-` - it will say that nothing changed from past line. 
+
 When you'll prepare your track - you can built it with compiler with command like this: 
 ```
 ./nmc example/blues player/track.bin
