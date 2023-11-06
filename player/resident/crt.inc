@@ -1,7 +1,7 @@
 	ASSUME ADL=1
 ;; USE org $40000 for usual application
 ;; or $B0000 for MOS command
-	org $40000
+	org $B0000
 	jp _start
 	align 64
 	db "MOS" ; Header

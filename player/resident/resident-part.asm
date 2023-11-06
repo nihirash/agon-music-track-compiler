@@ -1,41 +1,56 @@
-MAX_ARGS: 	EQU	1
-    include "crt.inc"
+    	ASSUME ADL=1
+        ORG $90000
+;; Agon Music Track Compiler player
+;; ADL mode assembly source
+;; (c) 2023 Aleksandr Sharikhin aka Nihirash
+;;
+;; For in-game sound fx please use channels 4 and above
 
-TRACK_RESET:    EQU 0
-TRACK_SET_FREQ: EQU 1
-TRACK_SET_VOL:  EQU 2
-TRACK_SET_WAVE: EQU 3
-TRACK_DELAY:    EQU 4
+;; Binary format commands
+TRACK_RESET:    EQU $00
+TRACK_SET_FREQ: EQU $01
+TRACK_SET_VOL:  EQU $02
+TRACK_SET_WAVE: EQU $03
+TRACK_DELAY:    EQU $04
 
-_main:
-    call track_init
-    ei
-    ;; Here happens your code
-    jr $
-    
-    ;; Before exit/when you'll need stop audio
-    call track_free
-    ret
+;; MOS call
+SET_INT:        EQU $14
 
+;; A0000
+    jp track_init
+;; A0004
+    jp track_free
 
-track_free:
-    di
-    ld hl, (old_int_handler + 1)
-    ld e, $32
-    MOSCALL mos_setint
-    ld hl, reset_sound
-    ld bc, end_reset_sound-reset_sound
-    rst.lil $18
-    ei
-    ret
-
+;; Initialize track playback
 track_init:
     di
     ld hl, track_tick
     ld e, $32
     ld hl, vsync_int
-    MOSCALL mos_setint
+
+    ld a, SET_INT
+	rst.lil $08
+    
     ld (old_int_handler + 1), hl
+    call track_reinit
+    ei
+    ret.lil
+
+;; Stop music
+track_free:
+    di
+    ld hl, (old_int_handler + 1)
+    ld e, $32
+
+    ld a, SET_INT
+	rst.lil $08
+
+    ld hl, reset_sound
+    ld bc, end_reset_sound-reset_sound
+    rst.lil $18
+    ei
+    ret.lil
+
 ;; Initializes track and sets vblank interrupt
 track_reinit:
     xor a
@@ -49,20 +64,20 @@ track_reinit:
     rst.lil $18
     ret
 reset_sound:
+    db $17, $00, $85, $00, $09
     db $17, $00, $85, $01, $09
     db $17, $00, $85, $02, $09
     db $17, $00, $85, $03, $09
-    db $17, $00, $85, $04, $09
 
+    db $17, $00, $85, $00, $08
     db $17, $00, $85, $01, $08
     db $17, $00, $85, $02, $08
     db $17, $00, $85, $03, $08
-    db $17, $00, $85, $04, $08
 
+    db $17, $00, $85, $00, $02, $00
     db $17, $00, $85, $01, $02, $00
     db $17, $00, $85, $02, $02, $00
     db $17, $00, $85, $03, $02, $00
-    db $17, $00, $85, $04, $02, $00
 end_reset_sound:
 
 vsync_int:
@@ -221,4 +236,3 @@ current_position:
     dl track
 ;; And just track that you'll play 
 track:
-    incbin "track.bin"
